@@ -1,6 +1,6 @@
 /**
- * @fileoverview This file contains the client-side logic for a simple click-to-call application using 
- * Twilio's Voice SDK.  It handles user interactions, manages call states, and communicates with the 
+ * @fileoverview This file contains the client-side logic for a simple click-to-call application using
+ * Twilio's Voice SDK.  It handles user interactions, manages call states, and communicates with the
  * server to obtain access tokens.
  */
 
@@ -18,11 +18,11 @@ filterTwilioErrorMessages();
 function filterTwilioErrorMessages() {
     const originalFactory = Twilio.Logger.methodFactory;
     Twilio.Logger.methodFactory = function (methodName, logLevel, loggerName) {
-    const rawMethod = originalFactory(methodName, logLevel, loggerName);
+        const rawMethod = originalFactory(methodName, logLevel, loggerName);
         return function (...args) {
             if (args[2] && args[2].code) {
                 if (args[2].code === 20104) { // AccessTokenExpired
-                    console.log('Access token expired (ignored).'); 
+                    console.log('Access token expired (ignored).');
                     return;
                 }
             }
@@ -49,8 +49,8 @@ async function callButtonHandler() {
 
         call.on('disconnect', async () => {
             console.log('Call disconnected');
-            await device.audio.unsetInputDevice();  // Avoids the appearance that the mic is still in use
-            readyToMakeCall()
+            await device.audio.unsetInputDevice(); // Avoids the appearance that the mic is still in use
+            readyToMakeCall();
         });
 
         call.on('cancel', () => {
@@ -97,7 +97,7 @@ async function makeCall() {
     } else if (result.status === 503) {
         alert("Sorry, we're very busy right now. Please try again later.");
     } else {
-        alert("Sorry, something went wrong. Please try again later.");
+        alert('Sorry, something went wrong. Please try again later.');
     }
     return undefined;
 }

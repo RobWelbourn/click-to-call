@@ -1,8 +1,10 @@
 # Click-to-Call
 
-A simple web application that allows users to make voice calls using Twilio's Voice SDK and Deno Oak server.
+A simple web application that allows users to make voice calls using Twilio's Voice SDK and Deno Oak
+server.
 
 ## Features
+
 - Click-to-call button for initiating calls
 - Twilio Voice SDK integration
 - Deno Oak server backend
@@ -12,10 +14,12 @@ A simple web application that allows users to make voice calls using Twilio's Vo
 ## Getting Started
 
 ### Prerequisites
+
 - [Deno](https://deno.land/)
 - Twilio account and credentials
 
 ### Setup
+
 1. Clone the repository:
    ```sh
    git clone https://github.com/yourusername/click-to-call.git
@@ -38,4 +42,5 @@ A simple web application that allows users to make voice calls using Twilio's Vo
 5. Open your browser and go to `http://localhost:8080`
 
 ## License
+
 MIT
