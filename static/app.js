@@ -15,7 +15,12 @@ callButton.addEventListener('click', callButtonHandler);
 endButton.addEventListener('click', endButtonHandler);
 filterTwilioErrorMessages();
 
+/**
+ * Suppresses specific Twilio error messages (like AccessTokenExpired) from being logged to the console.
+ * This helps to reduce noise in the console output.  NOTE: This is not a public API and may change.
+ */
 function filterTwilioErrorMessages() {
+    // Monkey-patch the Twilio.Logger.
     const originalFactory = Twilio.Logger.methodFactory;
     Twilio.Logger.methodFactory = function (methodName, logLevel, loggerName) {
         const rawMethod = originalFactory(methodName, logLevel, loggerName);
@@ -31,6 +36,9 @@ function filterTwilioErrorMessages() {
     };
 }
 
+/**
+ * Resets the UI to the initial state, ready to make a new call.
+ */
 function readyToMakeCall() {
     call = undefined;
     callButton.hidden = false;
@@ -38,6 +46,11 @@ function readyToMakeCall() {
     callButton.disabled = false;
 }
 
+/**
+ * Initiates an outbound call when the "Call" button is clicked.  It disables the button to prevent
+ * multiple clicks, makes the call, and sets up event handlers for call events like disconnect, cancel,
+ * and error.
+ */
 async function callButtonHandler() {
     console.log('Call button clicked');
     callButton.disabled = true;
@@ -52,9 +65,10 @@ async function callButtonHandler() {
             await device.audio.unsetInputDevice(); // Avoids the appearance that the mic is still in use
             readyToMakeCall();
         });
-
-        call.on('cancel', () => {
+        
+        call.on('cancel', async () => {
             console.log('Call canceled');
+            await device.audio.unsetInputDevice(); // Avoids the appearance that the mic is still in use
             readyToMakeCall();
         });
 
@@ -67,25 +81,43 @@ async function callButtonHandler() {
     }
 }
 
+/**
+ * Handles the "End" button click event to disconnect the active call and reset the UI.
+ */
 function endButtonHandler() {
     console.log('End button clicked');
-    try {
-        call.disconnect();
-    } catch (error) {
-        console.error('Error disconnecting the call:', error.message);
-    }
+    call.disconnect();
     readyToMakeCall();
 }
 
-// First, get an access token from the server and create a Device object.
-// Then, make an outbound call.
+/**
+ * Makes an outbound call using Twilio.Device.  Prior to making a call, it fetches an access token
+ * from the server.  If a Device object does not already exist, it creates a new one.
+ * @returns {Promise<Twilio.Call | undefined>} The active call if successful, otherwise undefined.
+ */
 async function makeCall() {
     const result = await fetch('/token');
     if (result.ok) {
         const { token } = await result.json();
+        console.log('Got access token');
+
         try {
-            device = new Device(token, { codecPreferences: ['opus', 'pcmu'] });
+            if (device) {
+                device.updateToken(token);
+            } else {
+                device = new Device(token, { codecPreferences: ['opus', 'pcmu'] });
+    
+                // Suppress AccessTokenExpired errors.
+                device.on('error', (error) => {
+                    if (error.code === 20104) { 
+                        console.log('Access token expired (ignored).');
+                    } else {
+                        console.error(`Twilio.Device error: ${error.message}`);
+                    }
+                });
+            }
             return device.connect();
+
         } catch (error) {
             alert(`Could not connect to Twilio: ${error.message}`);
             return undefined;
