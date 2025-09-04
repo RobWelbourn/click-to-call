@@ -1,5 +1,6 @@
 {
     "dependencies": {
+        "@twilio/voice-sdk": "^2.15.0",
         "twilio": "^5.8.2"
     }
 }

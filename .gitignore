@@ -1,1 +1,3 @@
 node_modules/
+static/twilio.js
+static/twilio.min.js

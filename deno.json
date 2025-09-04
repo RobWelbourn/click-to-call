@@ -1,11 +1,11 @@
 {
     "tasks": {
-        "dev": "deno run -A --watch main.ts"
+        "dev": "deno run -A --watch main.ts",
+        "get-sdk": "cp ./node_modules/@twilio/voice-sdk/dist/* ./static/"
     },
     "imports": {
         "@oak/oak": "jsr:@oak/oak@^17.1.6",
-        "@std/assert": "jsr:@std/assert@1",
-        "@twilio/voice-sdk": "npm:@twilio/voice-sdk@^2.15.0"
+        "@std/assert": "jsr:@std/assert@1"
     },
     "nodeModulesDir": "auto",
     "fmt": {

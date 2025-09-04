@@ -445,11 +445,11 @@
   "workspace": {
     "dependencies": [
       "jsr:@oak/oak@^17.1.6",
-      "jsr:@std/assert@1",
-      "npm:@twilio/voice-sdk@^2.15.0"
+      "jsr:@std/assert@1"
     ],
     "packageJson": {
       "dependencies": [
+        "npm:@twilio/voice-sdk@^2.15.0",
         "npm:twilio@^5.8.2"
       ]
     }
