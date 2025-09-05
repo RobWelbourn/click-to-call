@@ -2,19 +2,19 @@
 
 A simple web application that allows a user to make in-browser WebRTC calls to a preset phone number,
 using Twilio's Voice SDK, Deno, and the [Oak](https://oakserver.org/) web framework.  
-The web page contains a button that creates a call, and one that ends the call.  
+
+The demo web page contains a button that creates a call, and one that ends the call.  
 
 To be useful, the call and end buttons should be placed in a [real web page](https://www.noradsanta.org/).
-That is why this example contains no layout or styling whatsoever -- it's really about the JavaScript
+That is why this example contains no layout or styling whatsoever: it's really about the JavaScript
 code you need to embed in your web page, and how you manage calls on the back-end.
-
 
 ## Features
 
 - Buttons for starting and ending calls
 - Twilio Voice SDK integration
 - Deno Oak server backend
-- Access token generation and rate limiting for Twilio
+- Access token generation
 
 ## Getting Started
 
