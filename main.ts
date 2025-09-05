@@ -1,3 +1,10 @@
+/**
+ * @fileoverview A simple Deno/Oak web server to demonstrate click-to-call and the generation 
+ * of Twilio Access Tokens.
+ * 
+ * @see {@link https://www.twilio.com/docs/iam/access-tokens}
+ */
+
 import { Application, Router, send } from '@oak/oak';
 import Twilio from 'twilio';
 
@@ -16,6 +23,15 @@ if (!twilioAccountSid || !twilioApiKey || !twilioApiSecret || !outgoingApplicati
     Deno.exit(1);
 }
 
+/**
+ * Generates a Twilio Access Token for making voice calls.  If there's an identity associated with
+ * the user, it should be passed in here, otherwise the default 'anonymous' is used.
+ * 
+ * Note that the TTL is set to a very short time (5 seconds), to prevent misuse.
+ * 
+ * @param identity The identity of the user for whom the token is being generated.
+ * @returns The token as a JWT string.
+ */
 function generateAccessToken(identity: string = 'anonymous'): string {
     const voiceGrant = new VoiceGrant({ outgoingApplicationSid });
     const token = new AccessToken(
@@ -31,20 +47,20 @@ function generateAccessToken(identity: string = 'anonymous'): string {
 const app = new Application();
 const router = new Router();
 
-// Home page
+// Return the home page.
 router.get('/', async (context) => {
     await send(context, 'index.html', {
         root: Deno.cwd(),
     });
 });
 
-// Serve Access Token
+// Serve the Access Token.
 router.get('/token', (context) => {
     const token = generateAccessToken();
     context.response.body = { token };
 });
 
-// Serve static files from ./static directory
+// Serve JavaScript files from the ./static directory
 router.get('/static/:path+', async (context) => {
     await send(context, context.request.url.pathname, {
         root: Deno.cwd(),
