@@ -1,6 +1,7 @@
 {
     "dependencies": {
         "@twilio/voice-sdk": "^2.15.0",
+        "jsonwebtoken": "^9.0.2",
         "twilio": "^5.8.2"
     }
 }
