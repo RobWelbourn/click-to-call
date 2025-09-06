@@ -122,6 +122,8 @@ async function makeCall() {
             alert(`Could not connect to Twilio: ${error.message}`);
             return undefined;
         }
+    } else if (result.status === 401) {
+        alert("Sorry, you're not authorized to make calls.")
     } else if (result.status === 403) {
         alert("Sorry, you're on the naughty list and can't make calls.");
     } else if (result.status === 429) {
