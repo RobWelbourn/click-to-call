@@ -10,6 +10,7 @@ const callButton = document.querySelector('#callButton');
 const endButton = document.querySelector('#endButton');
 let call = undefined;
 let device = undefined;
+let microphonePermissionState = '';
 
 callButton.addEventListener('click', callButtonHandler);
 endButton.addEventListener('click', endButtonHandler);
@@ -27,13 +28,56 @@ function filterTwilioErrorMessages() {
         return function (...args) {
             if (args[2] && args[2].code) {
                 if (args[2].code === 20104) { // AccessTokenExpired
-                    console.log('Access token expired (ignored).');
+                    console.log('Access token expired (ignored)');
                     return;
                 }
             }
             rawMethod(...args);
         };
     };
+}
+
+/**
+ * Gets permission to use the microphone.  If permission has already been granted, it returns true.
+ * If permission has been denied, it alerts the user to enable it in their browser settings and
+ * returns false.  If permission has not yet been requested, it requests permission.
+ * @returns {Promise<boolean>} True if microphone permission is granted, false otherwise.
+ */
+async function getMicrophonePermission() {
+    if (microphonePermissionState === 'granted') {
+        return true;
+    }
+    if (microphonePermissionState === 'denied') {
+        alert('Microphone access has been denied. Please enable it in your browser settings and try again.');
+        return false;
+    }
+    if (microphonePermissionState === 'notFound') {
+        alert('Microphone not found. Please connect a microphone and try again.');
+        return false;
+    }
+
+    // Request permission to use the microphone.
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        stream.getTracks().forEach(track => track.stop()); // Immediately stop the stream.
+        microphonePermissionState = 'granted';
+        return true
+    } catch (error) {
+        if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
+            microphonePermissionState = 'notFound';
+            alert('No microphone found. Please connect a microphone and try again.');
+            return false;
+        }
+        if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+            microphonePermissionState = 'denied';
+            alert('Microphone access has been denied. Please enable it in your browser settings and try again.');
+            return false;
+        }
+        // Other errors (e.g., NotReadableError) can be handled here if needed.
+        microphonePermissionState = 'denied';
+        alert('Microphone access is required to make calls. Please enable it in your browser settings and try again.');
+        return;
+    }
 }
 
 /**
@@ -53,8 +97,11 @@ function readyToMakeCall() {
  */
 async function callButtonHandler() {
     console.log('Call button clicked');
-    callButton.disabled = true;
+    if (!await getMicrophonePermission()) {
+        return;
+    }
 
+    callButton.disabled = true;
     call = await makeCall();
     if (call) {
         callButton.hidden = true;
@@ -110,7 +157,7 @@ async function makeCall() {
                 // Suppress AccessTokenExpired errors.
                 device.on('error', (error) => {
                     if (error.code === 20104) { 
-                        console.log('Access token expired (ignored).');
+                        console.log('Access token expired (ignored)');
                     } else {
                         console.error(`Twilio.Device error: ${error.message}`);
                     }
