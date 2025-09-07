@@ -16,7 +16,7 @@
     "npm:@types/node@*": "24.2.0",
     "npm:jsonwebtoken@^9.0.2": "9.0.2",
     "npm:path-to-regexp@^6.3.0": "6.3.0",
-    "npm:twilio@^5.8.2": "5.8.2"
+    "npm:twilio@^5.9.0": "5.9.0"
   },
   "jsr": {
     "@oak/commons@1.0.1": {
@@ -381,8 +381,8 @@
         "side-channel-weakmap"
       ]
     },
-    "twilio@5.8.2": {
-      "integrity": "sha512-qH2F/HArNRxY3QPrpwbB+Fk+P8vw/RNC4ic9KJ+i8jKeRiqii6kSkZR351kxmqAP4ickAUdQotmciYSN5eBIBg==",
+    "twilio@5.9.0": {
+      "integrity": "sha512-Ij+xT9MZZSjP64lsy+x6vYsCCb5m2Db9KffkMXBrN3zWbG3rbkXxl+MZVVzrvpwEdSbQD0vMuin+TTlQ6kR6Xg==",
       "dependencies": [
         "axios",
         "dayjs",
@@ -452,7 +452,7 @@
       "dependencies": [
         "npm:@twilio/voice-sdk@^2.15.0",
         "npm:jsonwebtoken@^9.0.2",
-        "npm:twilio@^5.8.2"
+        "npm:twilio@^5.9.0"
       ]
     }
   }
