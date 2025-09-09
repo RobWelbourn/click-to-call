@@ -1,13 +1,12 @@
 /**
- * @fileoverview A simple Deno/Oak web server to demonstrate click-to-call and the generation 
+ * @fileoverview A simple Deno/Oak web server to demonstrate click-to-call and the generation
  * of Twilio Access Tokens.
- * 
+ *
  * @see {@link https://www.twilio.com/docs/iam/access-tokens}
  */
 
 import { Application, Router, send } from '@oak/oak';
 import Twilio from 'twilio';
-import jwt from 'jsonwebtoken'
 
 // Should be the shortest time between generating the token and using it.
 const ACCESS_TOKEN_TTL = 2; // Seconds
@@ -28,7 +27,7 @@ if (!twilioAccountSid || !twilioApiKey || !twilioApiSecret || !outgoingApplicati
 }
 
 /**
- * Generates a Twilio Access Token for making voice calls.  
+ * Generates a Twilio Access Token for making voice calls.
  * @param identity The identity of the user for whom the token is being generated.
  * @returns The token as a JWT string.
  */
@@ -44,57 +43,21 @@ function generateAccessToken(identity: string): string {
     return token.toJwt();
 }
 
-/**
- * Creates a session cookie, in the form of a Twilio Access Token.
- * @param identity The identity of the user for whom the token is being generated.
- * @returns The session cookie.
- */
-function createSessionCookie(identity: string): string {
-    const token = new AccessToken(
-        twilioAccountSid,
-        twilioApiKey,
-        twilioApiSecret,
-        { identity },
-    );
-    return `session=${token.toJwt()}`;  
-}
-
-/**
- * Checks the session cookie to see whether it's valid. The signature must be valid,
- * and the identity must match.
- * @param cookie The session cookie to check.
- * @param identity The user's identity. For anonymous users, this could be the IP address.
- * @returns True if the cookie is valid, false otherwise.
- */
-function checkSessionCookie(cookie: string, identity: string): boolean {
-    try {
-        const decoded = jwt.verify(cookie, twilioApiSecret, { 
-            ignoreExpiration: true, // We only care about signature and identity here
-        }) as { grants: { identity: string }};
-        return decoded.grants.identity === identity;
-    } catch (_error) {
-        return false;
-    }
-}
-
-const app = new Application();
+const app = new Application({ keys: [twilioApiSecret] }); // keys are used to sign cookies
 const router = new Router();
 
 // Return the home page, along with a session cookie based on the user's IP address.
 router.get('/', async (context) => {
-    const cookie = createSessionCookie(context.request.ip);
-    context.response.headers.set('Set-Cookie', cookie);
+    await context.cookies.set('session', context.request.ip);
     await send(context, 'index.html', {
         root: Deno.cwd(),
     });
 });
 
 // Check the session cookie and serve the Access Token.
-router.get('/token', (context) => {
-    const cookies = context.request.headers.get('Cookie') || '';
-    const match = cookies.match(/session=([^;]+)/);
-
-    if (!match || !checkSessionCookie(match[1], context.request.ip)) {
+router.get('/token', async (context) => {
+    const session = await context.cookies.get('session');
+    if (session !== context.request.ip) {
         context.response.status = 401;
         context.response.body = { error: 'Unauthorized' };
         return;
