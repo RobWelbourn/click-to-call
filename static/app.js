@@ -37,9 +37,7 @@ function filterTwilioErrorMessages() {
 }
 
 /**
- * Gets permission to use the microphone.  If permission has already been granted, it returns true.
- * If permission has been denied, it alerts the user to enable it in their browser settings and
- * returns false.  If permission has not yet been requested, it requests permission.
+ * Gets permission to use the microphone. 
  * @returns {Promise<boolean>} True if microphone permission is granted, false otherwise.
  */
 async function getMicrophonePermission() {
@@ -151,16 +149,13 @@ async function makeCall() {
             alert(`Could not connect to Twilio: ${error.message}`);
             return undefined;
         }
-    } else if (result.status === 401) {
-        alert("Sorry, you're not authorized to make calls.")
-    } else if (result.status === 403) {
-        alert("Sorry, you're on the naughty list and can't make calls.");
-    } else if (result.status === 429) {
-        alert("Sorry, you've made too many calls. Plaease try again later.");
-    } else if (result.status === 503) {
-        alert("Sorry, we're very busy right now. Please try again later.");
     } else {
-        alert('Sorry, something went wrong. Please try again later.');
+        const { error } = await result.json();
+        if (error) {
+            alert(error);
+        } else {
+            alert(`Sorry, something went wrong. Please try again later. Error code: ${result.status}`);
+        }
     }
     return undefined;
 }

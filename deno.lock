@@ -15,6 +15,7 @@
     "npm:@twilio/voice-sdk@^2.15.0": "2.15.0",
     "npm:@types/node@*": "24.2.0",
     "npm:path-to-regexp@^6.3.0": "6.3.0",
+    "npm:rate-limiter-flexible@^7.3.0": "7.3.0",
     "npm:twilio@^5.9.0": "5.9.0"
   },
   "jsr": {
@@ -334,6 +335,9 @@
         "side-channel"
       ]
     },
+    "rate-limiter-flexible@7.3.0": {
+      "integrity": "sha512-0R5gYs0m+jLGqcE6wxuvht+zuch0h4Un+JqVCEWaQajJGCWU2HzY0IFDp8WS8NNqIpviJOLmkZ5VKmzW/8q5dA=="
+    },
     "safe-buffer@5.2.1": {
       "integrity": "sha512-rp3So07KcdmmKbGvgaNxQSJr7bGVSVk5S9Eq1F+ppbRo70+YeaDxkw5Dd8NPN+GD6bjnYm2VuPuCXmpuYvmCXQ=="
     },
@@ -450,6 +454,7 @@
     "packageJson": {
       "dependencies": [
         "npm:@twilio/voice-sdk@^2.15.0",
+        "npm:rate-limiter-flexible@^7.3.0",
         "npm:twilio@^5.9.0"
       ]
     }

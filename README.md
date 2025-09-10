@@ -16,6 +16,7 @@ code you need to embed in your web page, and how you manage calls on the back-en
 - Twilio Voice SDK integration
 - Deno Oak server backend
 - Access token generation and session cookie management
+- Rate limiting
 
 ## Getting Started
 
@@ -94,4 +95,8 @@ In any case, your environment may be very different from ours: you may be using 
 
 ### Access token generation and session cookie management
 
-Access tokens are short-lived permission slips to make [WebRTC(https://www.twilio.com/en-us/webrtc)] calls through Twilio.  To guard against their misuse, our code requires a session cookie to be presented before issuing the token.  Moreover, the access token should be set to the shortest possible period of time between issuance and being conveyed to Twilio -- somewhere between 2 and 5 seconds, depending on the responsiveness of the web app and network conditions.
+Access tokens are short-lived permission slips to make [WebRTC](https://www.twilio.com/en-us/webrtc) calls through Twilio.  To guard against their misuse, our code requires a session cookie to be presented before issuing the token.  Moreover, the access token should be set to the shortest possible period of time between issuance and being conveyed to Twilio -- somewhere between 2 and 5 seconds, depending on the responsiveness of the web app and network conditions.
+
+### Rate limiting
+
+Rationing access tokens prevents an excess of calls from being made through the system.  There is a global limit of calls per second made through the website, and an individual per-IP address daily limit.  The fixed-window, in-memory rate limiter is used for illustration only; a production system might use a sliding-window algorithm to smooth out call arrival rates, and a memory-based database such as Redis to handle a multi-server website.
