@@ -75,7 +75,7 @@ The Call and End buttons both exist simultaneously, but only one of them is acti
 
 ### Microphone permissions
 
-Microphone permission state may be `granted`, `denied` or `prompt`.  When encountering a new website that wants to use the microphone, the state will be `prompt`, where the user is prompted to grant access to the system's microphone.  To improve the user experience, you should check the microphone permission before attempting to make a call, and that is what the sample code does.  There is an additional possibility, that the system has no microphone available; in this case, we add another state, `notFound`.
+Microphone permission state may be `granted`, `denied` or `prompt`.  When encountering a new website that wants to use the microphone, the state will be `prompt`, where the user is prompted to grant access to the system's microphone.  To improve the user experience, you should check the microphone permission before attempting to make a call, and that is what the sample code does.  There is also the possibility that the system has no microphone available.
 
 See [Working with microphones](https://www.twilio.com/docs/voice/sdks/javascript/best-practices#working-with-microphones-and-getusermedia).
 
