@@ -5,7 +5,7 @@
  * access tokens are not misused.
  * 
  * The rate limiter is a fixed-window, in-memory system.  A sliding-window algorithm might be better
- * for evening out the load on the phone system, and a distributed system (e.g. Redis) would be needed 
+ * for smoothing out the load on the phone system, and a distributed system (e.g. Redis) would be needed 
  * for a multi-server deployment.
  *
  * @see {@link https://www.twilio.com/docs/iam/access-tokens}
@@ -55,13 +55,13 @@ function generateAccessToken(identity: string): string {
 const app = new Application({ keys: [twilioApiSecret] }); // keys are used to sign cookies
 const router = new Router();
 
-// The global limiter allows up to 5 calls per second across all users.
+// Global limiter of calls per second across all users.
 const globalLimiter = new RateLimiterMemory({
     points: GLOBAL_CPS_LIMIT, 
     duration: 1, // per second 
 });
 
-// The per-IP limiter allows up to 10 calls per day per IP address.
+// Limiter of calls per day per IP address.
 const perIPLimiter = new RateLimiterMemory({
     points: PER_IP_DAILY_LIMIT, 
     duration: 60 * 60 * 24, // per day
@@ -75,7 +75,7 @@ router.get('/', async (context) => {
     });
 });
 
-// Check the session cookie and serve the Access Token.
+// Check the session cookie, apply rate limiting, and serve the Access Token.
 router.get('/token', async (context) => {
     const session = await context.cookies.get('session');
     if (session !== context.request.ip) {
